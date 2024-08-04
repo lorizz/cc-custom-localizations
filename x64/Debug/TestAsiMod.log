@@ -1,5 +1,0 @@
-﻿  dllmain.cpp
-  stdafx.cpp
-  Generating Code...
-E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\TestAsiMod\dllmain.cpp(24,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
-E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\TestAsiMod\stdafx.cpp(2,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?

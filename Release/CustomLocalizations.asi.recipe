@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\Release\CustomLocalizations.asi</FullPath>
+      <FullPath>E:\Programming\CastleCrashersRemaster\ASI modding\CustomLocalizations\Release\CustomLocalizations.asi</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

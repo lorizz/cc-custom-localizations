@@ -117,7 +117,7 @@ void InitFlow(uintptr_t base) {
     offset += 4;
 
     codeCave[offset++] = 0x7C; // jl (jump if less than)
-    codeCave[offset++] = 0x2C; // to original code (adjust this offset!!!!!)
+    codeCave[offset++] = 0x2A; // to original code (adjust this offset!!!!!)
 
     // If ID >= 828, subtract 827 from EDX
     codeCave[offset++] = 0x81; // sub

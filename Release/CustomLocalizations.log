@@ -1,0 +1,11 @@
+﻿  dllmain.cpp
+  stringlocs.cpp
+  Generating code
+  1 of 5471 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  CustomLocalizations.vcxproj -> E:\Programming\CastleCrashersRemaster\ASI modding\CustomLocalizations\Release\CustomLocalizations.asi
+  E:\Programming\CastleCrashersRemaster\ASI modding\CustomLocalizations\Release\CustomLocalizations.asi
+  E:\Programming\CastleCrashersRemaster\ASI modding\CustomLocalizations\Release\TestAsiMod.asi
+          2 file(s) copied.

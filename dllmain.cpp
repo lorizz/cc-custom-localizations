@@ -39,7 +39,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID /*lpReserved*/)
         }
         else
         {
-            MessageBoxA(NULL, "This .exe is not supported.\nPlease use the Steam version", "Castle Crashers Custom ASI Mod", MB_ICONERROR);
+            MessageBoxA(NULL, "This .exe is not supported.\nPlease use the Steam version", "Castle Crashers Custom Localizations", MB_ICONERROR);
             return FALSE;
         }
     }
