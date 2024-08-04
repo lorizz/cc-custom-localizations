@@ -47,6 +47,7 @@ To create your own custom localizations, you need to provide a JSON file followi
     "russianStr": "Критический Урон"
   }
 ]
+```
 
 ### Notes:
 
