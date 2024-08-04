@@ -1,0 +1,7 @@
+﻿  dllmain.cpp
+     Creating library E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\Debug\TestAsiMod\scripts\TestAsiMod.lib and object E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\Debug\TestAsiMod\scripts\TestAsiMod.exp
+dllmain.obj : error LNK2001: unresolved external symbol __imp___CrtDbgReport
+dllmain.obj : error LNK2001: unresolved external symbol __imp___invalid_parameter
+msvcprtd.lib(locale0_implib.obj) : error LNK2001: unresolved external symbol __imp___free_dbg
+msvcprtd.lib(locale0_implib.obj) : error LNK2001: unresolved external symbol __imp___malloc_dbg
+E:\Programming\CastleCrashersRemaster\ASI modding\TestAsiMod\Debug\TestAsiMod\scripts\TestAsiMod.asi : fatal error LNK1120: 4 unresolved externals
