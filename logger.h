@@ -1,16 +1,26 @@
 #pragma once
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/fmt/bin_to_hex.h>
+#include <memory>
 
 class Logger
 {
-	public:
-		Logger();
-		~Logger();
+public:
+    // Accessor for the singleton instance
+    static Logger& Instance();
 
-		spdlog::logger* Get();
+    // Access the spdlog logger
+    spdlog::logger* Get();
 
-	private:
-		std::shared_ptr<spdlog::logger> _logger;
+    Logger();
+    ~Logger();
+
+private:
+
+
+    // Singleton instance
+    static std::unique_ptr<Logger> _instance;
+
+    // Shared pointer to the spdlog logger
+    std::shared_ptr<spdlog::logger> _logger;
 };

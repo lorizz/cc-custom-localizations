@@ -4,7 +4,10 @@
 #include "stringlocs.h"
 
 DWORD WINAPI InitThread(LPVOID lpParam) {
+    Logger& l = Logger::Instance();
     uintptr_t base = reinterpret_cast<uintptr_t>(lpParam);
+    l.Get()->info("Base address 0x{:02X}", base);
+    l.Get()->flush();
     InitFlow(base);
     return 0;
 }
@@ -13,7 +16,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID /*lpReserved*/)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        Logger l;
+        Logger& l = Logger::Instance();
         l.Get()->info("DLL_PROCESS_ATTACH");
         l.Get()->flush();
 

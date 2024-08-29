@@ -48,8 +48,20 @@ void FreeLocalizedStrings(std::vector<LocalizationEntry>* vec) {
 }
 
 void InitFlow(uintptr_t base) {
+    Logger& l = Logger::Instance();
     DWORD oldProtect;
-    const uintptr_t LANGUAGE_ADDRESS = 0x6642EF78;
+    DWORD steamClientBase = (DWORD)GetModuleHandleA("steamclient.dll");
+
+    l.Get()->info("Steam client base: 0x{:02X}", steamClientBase);
+    l.Get()->flush();
+
+    if (steamClientBase == NULL) {
+        return;
+    }
+
+    const auto LANGUAGE_ADDRESS = steamClientBase + 0x125EF78;
+    l.Get()->info("Final offset: 0x{:02X}", LANGUAGE_ADDRESS);
+    l.Get()->flush();
     const int MAX_ATTEMPTS = 600;  // 60 seconds max (checking every 100ms)
 
     std::string language;
