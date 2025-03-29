@@ -1,35 +1,69 @@
 ﻿#include "stringlocs.h"
-
 std::vector<LocalizationEntry>* InjectAndGetCustomLocalizations() {
-    auto* vec = new std::vector<LocalizationEntry>;
+    Logger& l = Logger::Instance();
 
-    // Open and parse the JSON file
-    std::ifstream inputFile("./scripts/CustomLocalizations/strings.json");
-    if (!inputFile.is_open()) {
+    char exePath[MAX_PATH];
+    if (GetModuleFileNameA(NULL, exePath, MAX_PATH) == 0) {
+        l.Get()->info("Failed to get executable path");
+        l.Get()->flush();
         return nullptr;
     }
 
-    nlohmann::json jsonData;
-    inputFile >> jsonData;
+    // Estrai la directory dell'eseguibile
+    std::string basePath = std::string(exePath);
+    basePath = basePath.substr(0, basePath.find_last_of("\\/"));
 
-    for (const auto& item : jsonData) {
-        LocalizationEntry locString;
+    char currentDir[MAX_PATH];
+    GetCurrentDirectoryA(MAX_PATH, currentDir);
+    l.Get()->info("Current working directory: {}", currentDir);
+    l.Get()->info("Executable directory: {}", basePath);
 
-        locString.id = item["id"].get<int>();
+    std::string jsonPath = basePath + "\\scripts\\CustomLocalizations\\strings.json";
+    l.Get()->info("Attempting to open file: {}", jsonPath);
+    l.Get()->flush();
 
-        locString.languages[0] = ToWChar(item["englishStr"].get<std::string>());
-        locString.languages[1] = ToWChar(item["germanStr"].get<std::string>());
-        locString.languages[2] = ToWChar(item["frenchStr"].get<std::string>());
-        locString.languages[3] = ToWChar(item["spanishStr"].get<std::string>());
-        locString.languages[4] = ToWChar(item["italianStr"].get<std::string>());
-        locString.languages[5] = ToWChar(item["simplifiedChineseStr"].get<std::string>());
-        locString.languages[6] = ToWChar(item["koreanStr"].get<std::string>());
-        locString.languages[7] = ToWChar(item["tradChineseStr"].get<std::string>());
-        locString.languages[8] = ToWChar(item["portugueseStr"].get<std::string>());
-        locString.languages[9] = ToWChar(item["japaneseStr"].get<std::string>());
-        locString.languages[10] = ToWChar(item["russianStr"].get<std::string>());
+    std::ifstream inputFile(jsonPath);
+    if (!inputFile.is_open()) {
+        l.Get()->info("Failed to open file");
+        l.Get()->flush();
+        return nullptr;
+    }
 
-        vec->push_back(locString);
+    l.Get()->info("File opened successfully");
+    l.Get()->flush();
+
+    auto* vec = new std::vector<LocalizationEntry>;
+    try {
+        nlohmann::json jsonData;
+        inputFile >> jsonData;
+        l.Get()->info("JSON parsed, entries: {}", jsonData.size());
+        l.Get()->flush();
+
+        for (const auto& item : jsonData) {
+            LocalizationEntry locString;
+            locString.id = item["id"].get<int>();
+            locString.languages[0] = ToWChar(item["englishStr"].get<std::string>());
+            locString.languages[1] = ToWChar(item["germanStr"].get<std::string>());
+            locString.languages[2] = ToWChar(item["frenchStr"].get<std::string>());
+            locString.languages[3] = ToWChar(item["spanishStr"].get<std::string>());
+            locString.languages[4] = ToWChar(item["italianStr"].get<std::string>());
+            locString.languages[5] = ToWChar(item["simplifiedChineseStr"].get<std::string>());
+            locString.languages[6] = ToWChar(item["koreanStr"].get<std::string>());
+            locString.languages[7] = ToWChar(item["tradChineseStr"].get<std::string>());
+            locString.languages[8] = ToWChar(item["portugueseStr"].get<std::string>());
+            locString.languages[9] = ToWChar(item["japaneseStr"].get<std::string>());
+            locString.languages[10] = ToWChar(item["russianStr"].get<std::string>());
+            vec->push_back(locString);
+        }
+
+        l.Get()->info("Loaded {} localization entries", vec->size());
+        l.Get()->flush();
+    }
+    catch (const std::exception& e) {
+        l.Get()->info("Exception during JSON parsing: {}", e.what());
+        l.Get()->flush();
+        delete vec;
+        return nullptr;
     }
 
     return vec;
@@ -59,7 +93,7 @@ void InitFlow(uintptr_t base) {
         return;
     }
 
-    const auto LANGUAGE_ADDRESS = steamClientBase + 0x125EF78;
+    const auto LANGUAGE_ADDRESS = steamClientBase + 0x12009D0;
     l.Get()->info("Final offset: 0x{:02X}", LANGUAGE_ADDRESS);
     l.Get()->flush();
     const int MAX_ATTEMPTS = 600;  // 60 seconds max (checking every 100ms)
@@ -97,7 +131,8 @@ void InitFlow(uintptr_t base) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-
+    l.Get()->info("Current language {}", language);
+    l.Get()->flush();
     if (language == "english") languageIndex = 0;
     else if (language == "german") languageIndex = 1;
     else if (language == "french") languageIndex = 2;
@@ -111,10 +146,25 @@ void InitFlow(uintptr_t base) {
     else if (language == "russian") languageIndex = 10;
     else languageIndex = 0;  // Default
 
+    l.Get()->info("languageIndex: {}", languageIndex);
+    l.Get()->flush();
+
     auto* locStartAddress = InjectAndGetCustomLocalizations();
+
+    l.Get()->info("LocStartAddress created");
+    l.Get()->flush();
 
     BYTE* newMemory = (BYTE*)VirtualAlloc(NULL, 4096, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     if (newMemory == NULL) {
+        return;
+    }
+
+    l.Get()->info("newMemory created");
+    l.Get()->flush();
+
+    if (!locStartAddress || locStartAddress->empty()) {
+        l.Get()->info("locStartAddress is null or empty");
+        l.Get()->flush();
         return;
     }
 
@@ -137,10 +187,16 @@ void InitFlow(uintptr_t base) {
     *(DWORD*)(codeCave + offset) = 0x033C; // 828
     offset += 4;
 
+    l.Get()->info("BEFORE assigning locStartAddress data");
+    l.Get()->flush();
+
     // Load the value at locStartAddress + (subtracted EDX * 12)
     codeCave[offset++] = 0xB8; // mov eax,
     *(DWORD*)(codeCave + offset) = (DWORD)locStartAddress->data();
     offset += 4;
+
+    l.Get()->info("AFTER assigning locStartAddress data");
+    l.Get()->flush();
 
     codeCave[offset++] = 0x69; // imul
     codeCave[offset++] = 0xD2; // imul edx, edx
@@ -198,7 +254,8 @@ void InitFlow(uintptr_t base) {
     codeCave[offset++] = 0xE9;
     *(DWORD*)(codeCave + offset) = (base + 0x84B8E) - (DWORD)(codeCave + offset + 4);
     offset += 4;
-
+    l.Get()->info("Injected code");
+    l.Get()->flush();
     // Patch the original code to jump to our code cave
     uintptr_t originalInstructionAddress = base + 0x84B79;
     if (VirtualProtect(reinterpret_cast<void*>(originalInstructionAddress), 5, PAGE_EXECUTE_READWRITE, &oldProtect)) {

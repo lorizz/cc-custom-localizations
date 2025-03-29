@@ -24,7 +24,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID /*lpReserved*/)
         IMAGE_DOS_HEADER* dos = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
         IMAGE_NT_HEADERS* nt = reinterpret_cast<IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
 
-        if ((base + nt->OptionalHeader.AddressOfEntryPoint + (0x400000 - base)) == 0x730310)
+        if ((base + nt->OptionalHeader.AddressOfEntryPoint + (0x400000 - base)) == 0x4B88FD ||
+            (base + nt->OptionalHeader.AddressOfEntryPoint + (0x400000 - base)) == 0x730310) // Modded is 0x4B88FD, Original is 0x730310
         {
             l.Get()->info("Correct EXE version detected. Creating initialization thread.");
 
