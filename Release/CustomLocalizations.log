@@ -1,10 +1,2 @@
-﻿  stringlocs.cpp
-  Generating code
-  88 of 5663 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
-    62 functions were new in current compilation
-    305 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  CustomLocalizations.vcxproj -> E:\Programming\CastleCrashersRemaster\ASI modding\ilVonBurzaAsiModding\Release\CustomLocalizations.asi
-  E:\Programming\CastleCrashersRemaster\ASI modding\ilVonBurzaAsiModding\Release\CustomLocalizations.asi
-  E:\Programming\CastleCrashersRemaster\ASI modding\ilVonBurzaAsiModding\Release\CustomSave.asi
-          2 file(s) copied.
+﻿  dllmain.cpp
+E:\Programming\CastleCrashersRemaster\ASI modding\ilVonBurzaAsiModding\CustomLocalizations\dllmain.cpp : error C1041: cannot open program database 'E:\Programming\CastleCrashersRemaster\ASI modding\ilVonBurzaAsiModding\CustomLocalizations\Release\vc143.pdb'; if multiple CL.EXE write to the same .PDB file, please use /FS
