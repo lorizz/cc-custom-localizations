@@ -6,7 +6,7 @@
 
 namespace CustomLocalizations {
 
-    constexpr uintptr_t STRING_LOOKUP_OFFSET = 0x123430; // FUN_00ad3430
+    constexpr uintptr_t STRING_LOOKUP_OFFSET = 0x123D20; // FUN_00ad3430
 
     using OriginalStringLookup_t = uint16_t(__thiscall*)(void* thisPtr, int16_t stringId);
     static OriginalStringLookup_t g_originalLookup = nullptr;
