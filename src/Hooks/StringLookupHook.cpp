@@ -1,11 +1,8 @@
 #include "StringLookupHook.h"
 #include "../Core/LocalizationManager.h"
-#include <HookCrashersAPI.h>
 #include <detours.h>
 #include <windows.h>
-
-std::unordered_map<uint16_t, HookCrashers::API::InternalCustomCallback> HookCrashers::API::Client::s_customCallbacks;
-std::unordered_map<uint16_t, HookCrashers::API::InternalOverrideCallback> HookCrashers::API::Client::s_overrideCallbacks;
+#include <HookCrashers.h>
 
 namespace CustomLocalizations {
 
@@ -20,7 +17,6 @@ namespace CustomLocalizations {
 
         if (locManager.isInitialized() && stringId >= 5000)
         {
-            HookCrashers::API::Client::LogInfo("Found custom ID string" + std::to_string(stringId));
             // --- ID CUSTOM -> USA LA NOSTRA TABELLA, BYPASSA L'ORIGINALE ---
             int custom_index = stringId - 5000;
             const wchar_t* custom_string = locManager.getStringByIndex(custom_index);
@@ -56,29 +52,29 @@ namespace CustomLocalizations {
 
 
     bool SetupStringLookupHook(uintptr_t moduleBase) {
-        HookCrashers::API::Client::LogInfo("Setting up StringLookup hook...");
+        HookCrashers::LogInfo("Setting up StringLookup hook...");
 
         uintptr_t targetAddress = moduleBase + STRING_LOOKUP_OFFSET;
         g_originalLookup = reinterpret_cast<OriginalStringLookup_t>(targetAddress);
 
         if (!g_originalLookup) {
-            HookCrashers::API::Client::LogError("Target address for StringLookup is invalid.");
+            HookCrashers::LogError("Target address for StringLookup is invalid.");
             return false;
         }
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         if (DetourAttach(&(PVOID&)g_originalLookup, DetouredStringLookup) != NO_ERROR) {
-            HookCrashers::API::Client::LogError("DetourAttach for StringLookup failed.");
+            HookCrashers::LogError("DetourAttach for StringLookup failed.");
             DetourTransactionAbort();
             return false;
         }
         if (DetourTransactionCommit() != NO_ERROR) {
-            HookCrashers::API::Client::LogError("DetourTransactionCommit for StringLookup failed.");
+            HookCrashers::LogError("DetourTransactionCommit for StringLookup failed.");
             return false;
         }
 
-        HookCrashers::API::Client::LogInfo("StringLookup hook attached successfully!");
+        HookCrashers::LogInfo("StringLookup hook attached successfully!");
         return true;
     }
 }

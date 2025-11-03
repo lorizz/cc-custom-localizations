@@ -1,5 +1,5 @@
 #include "LocalizationManager.h"
-#include <HookCrashersAPI.h>
+#include <HookCrashers.h>
 #include <fstream>
 #include <thread>
 #include <chrono>
@@ -43,7 +43,7 @@ namespace CustomLocalizations {
 
         uintptr_t steamClientBase = (uintptr_t)GetModuleHandleA("steamclient.dll");
         if (steamClientBase == 0) {
-            HookCrashers::API::Client::LogError("[CustomLocalizations] steamclient.dll not found!");
+            HookCrashers::LogError("[CustomLocalizations] steamclient.dll not found!");
             return false;
         }
 
@@ -59,7 +59,7 @@ namespace CustomLocalizations {
         }
         if (language.empty()) language = "english";
 
-        HookCrashers::API::Client::LogInfo("[CustomLocalizations] Detected Steam language: " + language);
+        HookCrashers::LogInfo("[CustomLocalizations] Detected Steam language: " + language);
 
         if (language == "english") m_languageIndex = 0;
         else if (language == "german") m_languageIndex = 1;
@@ -77,7 +77,7 @@ namespace CustomLocalizations {
         std::string jsonPath = modPath + "strings.json";
         std::ifstream file(jsonPath);
         if (!file.is_open()) {
-            HookCrashers::API::Client::LogError("[CustomLocalizations] Failed to open strings.json at: " + jsonPath);
+            HookCrashers::LogError("[CustomLocalizations] Failed to open strings.json at: " + jsonPath);
             return false;
         }
 
@@ -112,10 +112,10 @@ namespace CustomLocalizations {
                     m_idMap[entry.logicalId] = entry.numericId;
                 }
             }
-            HookCrashers::API::Client::LogInfo("[CustomLocalizations] Loaded " + std::to_string(m_customStrings.size()) + " custom localization entries.");
+            HookCrashers::LogInfo("[CustomLocalizations] Loaded " + std::to_string(m_customStrings.size()) + " custom localization entries.");
         }
         catch (const std::exception& e) {
-            HookCrashers::API::Client::LogError("[CustomLocalizations] Failed to parse strings.json: " + std::string(e.what()));
+            HookCrashers::LogError("[CustomLocalizations] Failed to parse strings.json: " + std::string(e.what()));
             return false;
         }
 

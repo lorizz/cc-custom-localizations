@@ -1,33 +1,31 @@
 #include "GetLocalization.h"
 #include "../Core/LocalizationManager.h"
-#include <HookCrashersAPI.h>
-
-using HookCrashers::API::Client;
-using HookCrashers::API::ReturnHelper;
-using HookCrashers::API::SWFArgumentReader;
-using HC_SWFArgument = HookCrashers::SWF::Data::SWFArgument;
-using HC_SWFReturn = HookCrashers::SWF::Data::SWFReturn;
+#include <HookCrashers.h>
 
 namespace CustomLocalizations {
 
     static void GetLocalizationHandler(int paramCount, HC_SWFArgument** swfArgs, HC_SWFReturn* swfReturn) {
+        HookCrashers::SWF::ArgsReader args(paramCount, swfArgs);
+        HookCrashers::SWF::ReturnValue ret(swfReturn);
+
         if (paramCount < 1) {
-            ReturnHelper::SetInt(swfReturn, -1);
+            ret.SetFailure();
             return;
         }
 
-        std::string logicalId = SWFArgumentReader::GetString(swfArgs[0]);
+        std::string logicalId = args.GetString(0);
+        int returnValue = -1;
         if (logicalId.empty()) {
-            ReturnHelper::SetInt(swfReturn, -1);
+            ret.SetInt(returnValue);
             return;
         }
 
-        int numericId = LocalizationManager::getInstance().getNumericId(logicalId);
-        ReturnHelper::SetInt(swfReturn, numericId);
+        returnValue = LocalizationManager::getInstance().getNumericId(logicalId);
+        ret.SetInt(returnValue);
     }
 
     void RegisterGetLocalizationFunction() {
-        Client::RegisterCustomSWF(50200, "GetLocalization", GetLocalizationHandler);
-        Client::LogInfo("[CustomLocalizations] 'GetLocalization' SWF function registered.");
+        HookCrashers::RegisterCustomSWF(50200, "GetLocalization", GetLocalizationHandler);
+        HookCrashers::LogInfo("[CustomLocalizations] 'GetLocalization' SWF function registered.");
     }
 }
